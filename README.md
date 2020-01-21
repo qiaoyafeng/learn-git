@@ -21,4 +21,5 @@ learn-git
 删除分支：git branch -d <name>
 
 
-### Creating a new branch is quick & simple.
+#### Creating a new branch is quick AND simple.
+
