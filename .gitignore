@@ -1,0 +1,33 @@
+# .gitignore for learn-git.
+# There's a lot here, please try to keep it organized.
+
+### IDEs and text editors
+*~
+*.swp
+.idea/
+.project
+.pycharm_helpers/
+.pydevproject
+venv/
+
+### NFS artifacts
+.nfs*
+
+### OS X artifacts
+*.DS_Store
+.AppleDouble
+:2e_*
+:2e#
+
+### Python artifacts
+*.pyc
+
+### Unknown artifacts
+build
+\#*\#
+.env/
+autodeploy.properties
+.ws_migrations_complete
+
+*.log
+*.swp
