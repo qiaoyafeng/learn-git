@@ -7,4 +7,6 @@ learn-git doc
 
 [git book](https://git-scm.com/book/zh/v2)
 
+[图解Git](http://marklodato.github.io/visual-git-guide/index-zh-cn.html)
+
 
