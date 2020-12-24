@@ -35,7 +35,6 @@ git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')
 
 
 
-
 ---
 
 #### 本地修改不提交到远程仓库
@@ -161,4 +160,182 @@ git config core.filemode false
 * 方法2，git 全局设置 
 ```
 git config --global core.filemode false
+```
+
+### 怎么嵌套git库
+
+有种情况我们经常会遇到：某个工作中的项目需要包含并使用另一个项目。 也许是第三方库，或者你独立开发的，用于多个父项目的库。 现在问题来了：你想要把它们当做两个独立的项目，同时又想在一个项目中使用另一个。
+
+Git 通过子模块来解决这个问题。 子模块允许你将一个 Git 仓库作为另一个 Git 仓库的子目录。 它能让你将另一个仓库克隆到自己的项目中，同时还保持提交的独立。
+
+克隆主仓库
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace
+$ git clone https://github.com/hexojs/hexo-starter.git
+Cloning into 'hexo-starter'...
+remote: Enumerating objects: 32, done.
+remote: Counting objects: 100% (32/32), done.
+remote: Compressing objects: 100% (27/27), done.
+remote: Total 199 (delta 16), reused 9 (delta 5), pack-reused 167
+Receiving objects: 100% (199/199), 40.45 KiB | 9.00 KiB/s, done.
+Resolving deltas: 100% (95/95), done.
+
+
+```
+
+进入主仓库目录
+
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace
+$ cd hexo-starter/
+
+```
+
+查看主仓库目录
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace/hexo-starter (master)
+$ ls -al
+total 17
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 ./
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 ../
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 .git/
+-rw-r--r-- 1 qiaoyafeng 197121   71 十二月 24 10:34 .gitignore
+-rw-r--r-- 1 qiaoyafeng 197121    0 十二月 24 10:34 _config.landscape.yml
+-rw-r--r-- 1 qiaoyafeng 197121 2545 十二月 24 10:34 _config.yml
+-rw-r--r-- 1 qiaoyafeng 197121  641 十二月 24 10:34 package.json
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 scaffolds/
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 source/
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 themes/
+
+
+
+```
+
+使用子模块
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace/hexo-starter (master)
+$ git submodule add https://github.com/hexojs/hexo-theme-phase.git themes/phase
+Cloning into 'H:/mygitspace/hexo-starter/themes/phase'...
+remote: Enumerating objects: 141, done.
+remote: Counting objects: 100% (141/141), done.
+remote: Compressing objects: 100% (107/107), done.
+remote: Total 586 (delta 85), reused 60 (delta 33), pack-reused 445
+Receiving objects: 100% (586/586), 326.63 KiB | 67.00 KiB/s, done.
+Resolving deltas: 100% (254/254), done.
+warning: LF will be replaced by CRLF in .gitmodules.
+The file will have its original line endings in your working directory
+
+
+```
+
+查看主仓库目录：
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace/hexo-starter (master)
+$ ls -al
+total 18
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:37 ./
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 ../
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:37 .git/
+-rw-r--r-- 1 qiaoyafeng 197121   71 十二月 24 10:34 .gitignore
+-rw-r--r-- 1 qiaoyafeng 197121  102 十二月 24 10:37 .gitmodules
+-rw-r--r-- 1 qiaoyafeng 197121    0 十二月 24 10:34 _config.landscape.yml
+-rw-r--r-- 1 qiaoyafeng 197121 2545 十二月 24 10:34 _config.yml
+-rw-r--r-- 1 qiaoyafeng 197121  641 十二月 24 10:34 package.json
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 scaffolds/
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:34 source/
+drwxr-xr-x 1 qiaoyafeng 197121    0 十二月 24 10:36 themes/
+
+```
+
+运行查看状态`git status` 多了文件.gitmodules和文件夹themes/phase
+```
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   .gitmodules
+        new file:   themes/phase
+
+```
+
+查看子模块配置文件.gitmodules内容：
+
+```
+[submodule "themes/phase"]
+        path = themes/phase
+        url = https://github.com/hexojs/hexo-theme-phase.git
+
+```
+
+
+查看主仓库配置：
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace/hexo-starter (master)
+$ git config -l
+credential.helper=manager
+http.sslcainfo=D:/Program Files/Git/mingw64/ssl/certs/ca-bundle.crt
+http.sslbackend=openssl
+diff.astextplain.textconv=astextplain
+core.autocrlf=true
+core.fscache=true
+core.symlinks=false
+user.name=qiao_yafeng
+user.email=qiao_yafeng@outlook.com
+core.filemode=false
+core.repositoryformatversion=0
+core.filemode=false
+core.bare=false
+core.logallrefupdates=true
+core.symlinks=false
+core.ignorecase=true
+remote.origin.url=https://github.com/hexojs/hexo-starter.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
+submodule.themes/phase.url=https://github.com/hexojs/hexo-theme-phase.git
+submodule.themes/phase.active=true
+
+```
+仓库配置中共有两个仓库的路径分别是：
+```
+remote.origin.url=https://github.com/hexojs/hexo-starter.git
+submodule.themes/phase.url=https://github.com/hexojs/hexo-theme-phase.git
+```
+进入子模块仓库：
+
+```
+$ cd themes/phase/
+```
+查看子模块仓库配置：
+```
+qiaoyafeng@qiaoyafeng-PC MINGW64 /h/mygitspace/hexo-starter/themes/phase (master)
+$ git config -l
+credential.helper=manager
+http.sslcainfo=D:/Program Files/Git/mingw64/ssl/certs/ca-bundle.crt
+http.sslbackend=openssl
+diff.astextplain.textconv=astextplain
+core.autocrlf=true
+core.fscache=true
+core.symlinks=false
+user.name=qiao_yafeng
+user.email=qiao_yafeng@outlook.com
+core.filemode=false
+core.repositoryformatversion=0
+core.filemode=false
+core.bare=false
+core.logallrefupdates=true
+core.symlinks=false
+core.ignorecase=true
+core.worktree=../../../../themes/phase
+remote.origin.url=https://github.com/hexojs/hexo-theme-phase.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
+
+```
+子模块仓库配置仅有子模块仓库的路径：
+```
+remote.origin.url=https://github.com/hexojs/hexo-theme-phase.git
 ```
